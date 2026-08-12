@@ -1,0 +1,863 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Admin PT IMST</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://imst.co.id/wp-content/uploads/2024/10/cropped-icon-32x32.png"
+    />
+    <style>
+      :root {
+        --blue: #1044d1;
+        --blue-deep: #0b2f94;
+        --blue-tint: #eef2fe;
+        --ink: #12182b;
+        --ink-soft: #5b6478;
+        --ink-faint: #9aa2b2;
+        --border: #e3e6ed;
+        --green: #1c7a44;
+        --green-tint: #e7f5ec;
+        --amber: #b5720f;
+        --amber-tint: #fbf1e0;
+        --red: #b5301f;
+        --red-tint: #fbeae8;
+        --bg: #ffffff;
+        --bg-soft: #f7f8fc;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      /* ===== Login screen ===== */
+      .login-wrap {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background:
+          linear-gradient(
+            180deg,
+            rgba(11, 18, 35, 0.72),
+            rgba(11, 18, 35, 0.72)
+          ),
+          url("LOGIN_BACKGROUND_URL") center center / cover no-repeat;
+        background-color: var(
+          --bg-soft
+        ); /* fallback kalau gambar belum diisi */
+      }
+      .login-card {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 36px 32px;
+        width: 100%;
+        max-width: 360px;
+        box-shadow: 0 20px 60px rgba(11, 18, 35, 0.35);
+      }
+      .login-mark {
+        width: 44px;
+        height: 44px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 18px;
+        overflow: hidden;
+        background: var(--blue);
+      }
+      .login-mark img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+      }
+      .login-mark span {
+        color: #fff;
+        font-weight: 800;
+        font-size: 15px;
+      }
+      .login-card h1 {
+        font-family: "Source Serif 4", Georgia, serif;
+        font-weight: 600;
+        font-size: 21px;
+        margin-bottom: 4px;
+      }
+      .login-sub {
+        font-size: 12.5px;
+        color: var(--ink-soft);
+        margin-bottom: 26px;
+      }
+      .field {
+        margin-bottom: 16px;
+      }
+      .field label {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--ink-soft);
+        margin-bottom: 6px;
+      }
+      .field input {
+        width: 100%;
+        padding: 10px 13px;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        font-family: inherit;
+        font-size: 14px;
+        color: var(--ink);
+        background: var(--bg-soft);
+      }
+      .field input:focus {
+        outline: none;
+        border-color: var(--blue);
+        background: var(--bg);
+      }
+      .login-btn {
+        width: 100%;
+        padding: 11px;
+        background: var(--blue);
+        border: none;
+        border-radius: 7px;
+        color: #fff;
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+        margin-top: 4px;
+      }
+      .login-btn:hover {
+        background: var(--blue-deep);
+      }
+      .login-btn:disabled {
+        opacity: 0.6;
+        cursor: default;
+      }
+      .login-error {
+        background: var(--red-tint);
+        color: var(--red);
+        font-size: 12.5px;
+        font-weight: 600;
+        padding: 9px 12px;
+        border-radius: 6px;
+        margin-bottom: 16px;
+        display: none;
+      }
+      .setup-note {
+        margin-top: 22px;
+        padding-top: 18px;
+        border-top: 1px dashed var(--border);
+        font-size: 11.5px;
+        color: var(--ink-faint);
+        line-height: 1.6;
+      }
+
+      /* ===== Dashboard shell ===== */
+      .app {
+        display: none;
+      }
+      .topbar {
+        border-bottom: 3px solid var(--blue);
+      }
+      .topbar-inner {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 16px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .org {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .org-mark {
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+        background: var(--blue);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+      .org-name {
+        font-weight: 700;
+        font-size: 14px;
+      }
+      .org-name small {
+        display: block;
+        font-weight: 500;
+        color: var(--ink-soft);
+        font-size: 11px;
+      }
+      .logout-btn {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: var(--ink-soft);
+        border: 1px solid var(--border);
+        padding: 7px 14px;
+        border-radius: 7px;
+        cursor: pointer;
+        background: var(--bg);
+      }
+      .logout-btn:hover {
+        border-color: var(--red);
+        color: var(--red);
+      }
+
+      .page {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 28px 24px 70px;
+      }
+      h2 {
+        font-family: "Source Serif 4", Georgia, serif;
+        font-weight: 600;
+        font-size: 24px;
+        margin-bottom: 4px;
+      }
+      .page-sub {
+        font-size: 13px;
+        color: var(--ink-soft);
+        margin-bottom: 22px;
+      }
+
+      /* ===== Stats ===== */
+      .stats {
+        display: flex;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 22px;
+      }
+      .stat {
+        flex: 1;
+        padding: 13px 16px;
+        border-right: 1px solid var(--border);
+      }
+      .stat:last-child {
+        border-right: none;
+      }
+      .stat-num {
+        font-size: 20px;
+        font-weight: 800;
+      }
+      .stat-num.amber {
+        color: var(--amber);
+      }
+      .stat-num.green {
+        color: var(--green);
+      }
+      .stat-label {
+        font-size: 11px;
+        color: var(--ink-soft);
+        margin-top: 2px;
+      }
+
+      /* ===== Tabs ===== */
+      .tabs {
+        display: flex;
+        gap: 4px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 18px;
+      }
+      .tab {
+        padding: 10px 16px;
+        font-size: 13.5px;
+        font-weight: 700;
+        color: var(--ink-faint);
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+      }
+      .tab.active {
+        color: var(--blue);
+        border-color: var(--blue);
+      }
+
+      .toolbar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+      }
+      .search-box {
+        flex: 1;
+        min-width: 220px;
+        position: relative;
+      }
+      .search-box input {
+        width: 100%;
+        padding: 9px 13px 9px 34px;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        font-family: inherit;
+        font-size: 13px;
+        background: var(--bg-soft);
+      }
+      .search-box input:focus {
+        outline: none;
+        border-color: var(--blue);
+        background: var(--bg);
+      }
+      .search-box::before {
+        content: "⌕";
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--ink-faint);
+      }
+      .filter-chip {
+        padding: 8px 13px;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ink-soft);
+        cursor: pointer;
+        background: var(--bg);
+      }
+      .filter-chip.active {
+        background: var(--blue);
+        border-color: var(--blue);
+        color: #fff;
+      }
+
+      /* ===== Card list ===== */
+      .card {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 16px 18px;
+        margin-bottom: 12px;
+      }
+      .card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+      }
+      .card-title {
+        font-size: 14.5px;
+        font-weight: 700;
+        color: var(--ink);
+      }
+      .card-no {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--blue);
+        margin-bottom: 2px;
+      }
+      .card-meta {
+        font-size: 12px;
+        color: var(--ink-soft);
+        margin-top: 3px;
+      }
+      .card-desc {
+        font-size: 12.5px;
+        color: var(--ink-soft);
+        margin-top: 6px;
+        line-height: 1.5;
+      }
+
+      .badge {
+        font-size: 10.5px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        padding: 4px 10px;
+        border-radius: 20px;
+        white-space: nowrap;
+      }
+      .badge.open {
+        color: var(--amber);
+        background: var(--amber-tint);
+      }
+      .badge.done {
+        color: var(--green);
+        background: var(--green-tint);
+      }
+
+      .edit-grid {
+        display: grid;
+        grid-template-columns: 140px 1fr 150px auto;
+        gap: 10px;
+        align-items: end;
+        padding-top: 12px;
+        border-top: 1px solid var(--border);
+      }
+      .edit-field label {
+        display: block;
+        font-size: 10.5px;
+        font-weight: 700;
+        color: var(--ink-faint);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        margin-bottom: 5px;
+      }
+      .edit-field select,
+      .edit-field input {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 13px;
+        background: var(--bg-soft);
+      }
+      .edit-field select:focus,
+      .edit-field input:focus {
+        outline: none;
+        border-color: var(--blue);
+        background: var(--bg);
+      }
+      .save-btn {
+        padding: 8px 18px;
+        background: var(--blue);
+        border: none;
+        border-radius: 6px;
+        color: #fff;
+        font-weight: 700;
+        font-size: 13px;
+        cursor: pointer;
+        height: 37px;
+      }
+      .save-btn:hover {
+        background: var(--blue-deep);
+      }
+      .save-btn:disabled {
+        opacity: 0.6;
+        cursor: default;
+      }
+      .save-btn.saved {
+        background: var(--green);
+      }
+
+      .state-msg {
+        text-align: center;
+        padding: 50px 20px;
+        color: var(--ink-soft);
+        font-size: 13.5px;
+      }
+      .state-msg.error {
+        color: var(--red);
+      }
+      .retry-btn {
+        margin-top: 14px;
+        background: var(--blue);
+        border: none;
+        color: #fff;
+        padding: 8px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+      }
+
+      @media (max-width: 640px) {
+        .edit-grid {
+          grid-template-columns: 1fr;
+        }
+        .stats {
+          flex-wrap: wrap;
+        }
+        .stat {
+          min-width: 50%;
+          border-bottom: 1px solid var(--border);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- LOGIN -->
+    <div class="login-wrap" id="loginScreen">
+      <div class="login-card">
+        <div class="login-mark">
+          <img
+            src="LOGO_IMS"
+            alt="Logo PT IMST"
+            onerror="
+              this.replaceWith(
+                Object.assign(document.createElement('span'), {
+                  textContent: 'IM',
+                }),
+              )
+            "
+          />
+        </div>
+        <h1>Dashboard Admin</h1>
+        <!-- <div class="login-sub">
+          Masuk untuk update progres laporan SPR & tiket IT
+        </div> -->
+        <div class="login-error" id="loginError"></div>
+        <div class="field">
+          <label for="username">Username</label>
+          <input type="text" id="username" autocomplete="username" />
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            autocomplete="current-password"
+          />
+        </div>
+        <button class="login-btn" id="loginBtn" onclick="doLogin()">
+          Masuk
+        </button>
+        <!-- <div class="setup-note">
+          Backend belum terhubung? Set <code>APPS_SCRIPT_URL</code> di bagian
+          bawah file ini dengan URL Web App dari Apps Script kamu.
+        </div> -->
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="app" id="app">
+      <div class="topbar">
+        <div class="topbar-inner">
+          <div class="org">
+            <div class="org-mark">
+              <img
+                src="LOGO_IMST_URL"
+                alt="Logo PT IMST"
+                style="
+                  width: 100%;
+                  height: 100%;
+                  object-fit: contain;
+                  display: block;
+                "
+                onerror="this.parentElement.textContent = 'IM'"
+              />
+            </div>
+            <div class="org-name">PT IMST<small>Dashboard Admin</small></div>
+          </div>
+          <button class="logout-btn" onclick="doLogout()">Keluar</button>
+        </div>
+      </div>
+
+      <div class="page">
+        <h2>Update Progres</h2>
+        <!-- <div class="page-sub">
+          Perubahan langsung tersimpan ke Google Sheets — tidak perlu buka sheet
+          manual.
+        </div> -->
+
+        <div class="stats" id="stats" style="display: none">
+          <div class="stat">
+            <div class="stat-num" id="statTotal">–</div>
+            <div class="stat-label">Total item</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num amber" id="statOpen">–</div>
+            <div class="stat-label">Belum selesai</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num green" id="statDone">–</div>
+            <div class="stat-label">Selesai</div>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <div class="tab active" data-tab="spr">Laporan SPR</div>
+          <div class="tab" data-tab="it">Tiket IT</div>
+        </div>
+
+        <div class="toolbar">
+          <div class="search-box">
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Cari nomor atau divisi…"
+            />
+          </div>
+          <div class="filter-chip active" data-filter="open">Belum Selesai</div>
+          <div class="filter-chip" data-filter="all">Semua</div>
+        </div>
+
+        <div id="list">
+          <div class="state-msg" id="stateMsg">Memuat data…</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const APPS_SCRIPT_URL =
+        "https://script.google.com/macros/s/AKfycbzSVImxzjEtm97zbAyPoA9RF0X4ADYgp9TT6hzj-fPSJXcMji-fTbFIc7tJwr7QomJX/exec";
+
+      let token = null;
+      let data = { spr: [], it: [] };
+      let activeTab = "spr";
+      let activeFilter = "open";
+      let searchTerm = "";
+
+      function escapeHtml(str) {
+        const div = document.createElement("div");
+        div.textContent = str == null ? "" : String(str);
+        return div.innerHTML;
+      }
+
+      async function callApi(payload) {
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
+      }
+
+      async function doLogin() {
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value;
+        const btn = document.getElementById("loginBtn");
+        const errBox = document.getElementById("loginError");
+        errBox.style.display = "none";
+
+        if (!username || !password) return;
+        if (APPS_SCRIPT_URL.includes("PASTE_URL")) {
+          errBox.textContent =
+            "Backend belum terhubung. Lihat catatan setup di bawah form.";
+          errBox.style.display = "block";
+          return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = "Memeriksa…";
+        try {
+          const result = await callApi({ action: "login", username, password });
+          if (result.success) {
+            token = result.token;
+            document.getElementById("loginScreen").style.display = "none";
+            document.getElementById("app").style.display = "block";
+            loadData();
+          } else {
+            errBox.textContent = result.error || "Login gagal";
+            errBox.style.display = "block";
+          }
+        } catch (err) {
+          errBox.textContent =
+            "Tidak bisa menghubungi server. Cek koneksi atau URL Apps Script.";
+          errBox.style.display = "block";
+        }
+        btn.disabled = false;
+        btn.textContent = "Masuk";
+      }
+
+      function doLogout() {
+        token = null;
+        window.location.href = "../index.html";
+      }
+
+      async function loadData() {
+        document.getElementById("list").innerHTML =
+          `<div class="state-msg">Memuat data…</div>`;
+        try {
+          const result = await callApi({ action: "list", token });
+          if (!result.success) {
+            if (result.error && result.error.includes("Sesi")) {
+              doLogout();
+              return;
+            }
+            throw new Error(result.error);
+          }
+          data.spr = result.spr;
+          data.it = result.it;
+          renderStats();
+          renderList();
+        } catch (err) {
+          document.getElementById("list").innerHTML =
+            `<div class="state-msg error">Gagal memuat data.<br><button class="retry-btn" onclick="loadData()">Coba Lagi</button></div>`;
+        }
+      }
+
+      function isDone(item) {
+        return (item.status || "").toString().trim().toUpperCase() === "CLOSE";
+      }
+
+      function renderStats() {
+        const items = data[activeTab];
+        const total = items.length;
+        const done = items.filter(isDone).length;
+        document.getElementById("statTotal").textContent = total;
+        document.getElementById("statOpen").textContent = total - done;
+        document.getElementById("statDone").textContent = done;
+        document.getElementById("stats").style.display = "flex";
+      }
+
+      function renderList() {
+        const items = data[activeTab].filter((item) => {
+          if (activeFilter === "open" && isDone(item)) return false;
+          const nomor = activeTab === "spr" ? item.nomorSpr : item.nomorTiket;
+          if (searchTerm) {
+            const hay = `${nomor} ${item.divisi}`.toLowerCase();
+            if (!hay.includes(searchTerm)) return false;
+          }
+          return true;
+        });
+
+        const list = document.getElementById("list");
+        list.innerHTML = "";
+
+        if (items.length === 0) {
+          list.innerHTML = `<div class="state-msg">Tidak ada data yang cocok.</div>`;
+          return;
+        }
+
+        items.forEach((item) => {
+          const nomor = activeTab === "spr" ? item.nomorSpr : item.nomorTiket;
+          const title =
+            activeTab === "spr"
+              ? item.mesin
+              : `${item.kategori}${item.jenis ? " — " + item.jenis : ""}`;
+          const desc = activeTab === "spr" ? item.uraian : item.deskripsi;
+          const done = isDone(item);
+
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+      <div class="card-head">
+        <div>
+          <div class="card-no">No. ${escapeHtml(nomor)}</div>
+          <div class="card-title">${escapeHtml(title || "—")}</div>
+          <div class="card-meta">${escapeHtml(item.divisi || "—")}</div>
+          ${desc ? `<div class="card-desc">${escapeHtml(desc)}</div>` : ""}
+        </div>
+        <div class="badge ${done ? "done" : "open"}">${done ? "Selesai" : "Diproses"}</div>
+      </div>
+      <div class="edit-grid">
+        <div class="edit-field">
+          <label>Status</label>
+          <select class="f-status">
+            <option value="" ${!done ? "selected" : ""}>Diproses</option>
+            <option value="CLOSE" ${done ? "selected" : ""}>Close</option>
+          </select>
+        </div>
+        <div class="edit-field">
+          <label>Tindak Lanjut</label>
+          <input type="text" class="f-tindak" value="${escapeHtml(item.tindakLanjut || "")}" placeholder="Catatan progres…">
+        </div>
+        <div class="edit-field">
+          <label>Tanggal Realisasi</label>
+          <input type="date" class="f-tanggal" value="${escapeHtml(item.tanggalRealisasi || "")}">
+        </div>
+        <button class="save-btn">Simpan</button>
+      </div>
+    `;
+
+          const saveBtn = card.querySelector(".save-btn");
+          saveBtn.addEventListener("click", () =>
+            saveItem(item, nomor, card, saveBtn),
+          );
+
+          list.appendChild(card);
+        });
+      }
+
+      async function saveItem(item, nomor, card, btn) {
+        const status = card.querySelector(".f-status").value;
+        const tindakLanjut = card.querySelector(".f-tindak").value;
+        const tanggalRealisasi = card.querySelector(".f-tanggal").value;
+
+        btn.disabled = true;
+        btn.textContent = "Menyimpan…";
+        btn.classList.remove("saved");
+
+        try {
+          const result = await callApi({
+            action: "update",
+            token,
+            sheetType: activeTab,
+            rowIndex: item.rowIndex,
+            nomor: nomor,
+            status,
+            tindakLanjut,
+            tanggalRealisasi,
+          });
+          if (result.success) {
+            btn.textContent = "Tersimpan ✓";
+            btn.classList.add("saved");
+            item.status = status;
+            item.tindakLanjut = tindakLanjut;
+            item.tanggalRealisasi = tanggalRealisasi;
+            setTimeout(() => {
+              renderStats();
+              renderList();
+            }, 700);
+          } else {
+            if (result.error && result.error.includes("Sesi")) {
+              doLogout();
+              return;
+            }
+            alert(result.error || "Gagal menyimpan");
+            btn.disabled = false;
+            btn.textContent = "Simpan";
+          }
+        } catch (err) {
+          alert("Gagal terhubung ke server.");
+          btn.disabled = false;
+          btn.textContent = "Simpan";
+        }
+      }
+
+      document.querySelectorAll(".tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          document
+            .querySelectorAll(".tab")
+            .forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+          activeTab = tab.dataset.tab;
+          renderStats();
+          renderList();
+        });
+      });
+
+      document.querySelectorAll(".filter-chip").forEach((chip) => {
+        chip.addEventListener("click", () => {
+          document
+            .querySelectorAll(".filter-chip")
+            .forEach((c) => c.classList.remove("active"));
+          chip.classList.add("active");
+          activeFilter = chip.dataset.filter;
+          renderList();
+        });
+      });
+
+      document.getElementById("searchInput").addEventListener("input", (e) => {
+        searchTerm = e.target.value.trim().toLowerCase();
+        renderList();
+      });
+
+      document.getElementById("password").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") doLogin();
+      });
+    </script>
+  </body>
+</html>
