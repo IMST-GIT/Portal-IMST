@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Status Ruang Rapat — PT IMST</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --blue: #1044d1;
+        --blue-deep: #0b2f94;
+        --blue-tint: #eef2fe;
+        --ink: #12182b;
+        --ink-soft: #5b6478;
+        --ink-faint: #9aa2b2;
+        --border: #e3e6ed;
+        --green: #1c7a44;
+        --green-tint: #e7f5ec;
+        --red: #b5301f;
+        --red-tint: #fbeae8;
+        --bg: #ffffff;
+        --bg-soft: #f7f8fc;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      /* ===== Page head ===== */
+      .page {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 30px 24px 70px;
+      }
+      .page-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 22px;
+      }
+      h1 {
+        font-family: "Source Serif 4", Georgia, serif;
+        font-weight: 600;
+        font-size: 27px;
+        letter-spacing: -0.01em;
+        color: var(--ink);
+      }
+      .subtitle {
+        font-size: 13.5px;
+        color: var(--ink-soft);
+        margin-top: 5px;
+      }
+      .clock-wrap {
+        text-align: right;
+      }
+      .clock {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--blue);
+        font-variant-numeric: tabular-nums;
+      }
+      .date-line {
+        font-size: 12px;
+        color: var(--ink-faint);
+        margin-top: 2px;
+      }
+
+      /* ===== Stat strip ===== */
+      .stats {
+        display: flex;
+        gap: 0;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 30px;
+      }
+      .stat {
+        flex: 1;
+        padding: 14px 18px;
+        border-right: 1px solid var(--border);
+      }
+      .stat:last-child {
+        border-right: none;
+      }
+      .stat-num {
+        font-size: 22px;
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+      }
+      .stat-num.blue {
+        color: var(--blue);
+      }
+      .stat-num.green {
+        color: var(--green);
+      }
+      .stat-num.red {
+        color: var(--red);
+      }
+      .stat-label {
+        font-size: 11.5px;
+        color: var(--ink-soft);
+        margin-top: 3px;
+      }
+
+      /* ===== Room list ===== */
+      .list {
+        border-top: 1px solid var(--border);
+      }
+      .room-row {
+        display: grid;
+        grid-template-columns: 1fr 168px 1.6fr 104px;
+        align-items: center;
+        gap: 18px;
+        padding: 16px 4px;
+        border-bottom: 1px solid var(--border);
+      }
+      .room-name {
+        font-size: 14.5px;
+        font-weight: 700;
+        color: var(--ink);
+        line-height: 1.3;
+      }
+      .room-cap {
+        font-size: 12px;
+        color: var(--ink-faint);
+        margin-top: 2px;
+        font-weight: 500;
+      }
+
+      /* signature: door-plate slider status */
+      .plate {
+        display: flex;
+        align-items: center;
+        border: 1.5px solid var(--border);
+        border-radius: 5px;
+        overflow: hidden;
+        width: 158px;
+        height: 30px;
+        position: relative;
+        background: var(--bg-soft);
+      }
+      .plate-half {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9.5px;
+        font-weight: 800;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        z-index: 1;
+        transition: color 0.25s ease;
+      }
+      .plate-slider {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 50%;
+        background: var(--red-tint);
+        border-right: 1.5px solid var(--red);
+        transition:
+          left 0.3s ease,
+          background 0.3s ease,
+          border-color 0.3s ease;
+      }
+      .plate.free .plate-slider {
+        left: 50%;
+        background: var(--green-tint);
+        border-right: none;
+        border-left: 1.5px solid var(--green);
+      }
+      .plate.busy .plate-slider {
+        left: 0%;
+      }
+      .plate.busy .plate-half.busy-label {
+        color: var(--red);
+      }
+      .plate.free .plate-half.free-label {
+        color: var(--green);
+      }
+
+      .agenda {
+        font-size: 13px;
+        color: var(--ink-soft);
+        line-height: 1.45;
+      }
+      .agenda .who {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .agenda .muted {
+        color: var(--ink-faint);
+        font-style: italic;
+      }
+      .until {
+        font-size: 12.5px;
+        color: var(--ink-soft);
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* ===== Footer ===== */
+      footer {
+        margin-top: 26px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--ink-faint);
+      }
+      .sync-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--green);
+        display: inline-block;
+        margin-right: 6px;
+      }
+
+      .state-msg {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--ink-soft);
+        font-size: 13.5px;
+      }
+      .state-msg.error {
+        color: var(--red);
+      }
+      .retry-btn {
+        margin-top: 14px;
+        background: var(--blue);
+        border: none;
+        color: #fff;
+        padding: 8px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .retry-btn:hover {
+        background: var(--blue-deep);
+      }
+
+      @media (max-width: 680px) {
+        .room-row {
+          grid-template-columns: 1fr;
+          row-gap: 8px;
+          padding: 16px 2px;
+        }
+        .plate {
+          width: 148px;
+        }
+        .until {
+          text-align: left;
+        }
+        .stats {
+          flex-wrap: wrap;
+        }
+        .stat {
+          min-width: 45%;
+          border-bottom: 1px solid var(--border);
+        }
+      }
+      :focus-visible {
+        outline: 2px solid var(--blue);
+        outline-offset: 2px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <h1>Status Ruang Rapat</h1>
+          <div class="subtitle">
+            Diperbarui otomatis dari jadwal peminjaman ruang
+          </div>
+        </div>
+        <div class="clock-wrap">
+          <div class="clock" id="clock">--:--:--</div>
+          <div class="date-line" id="dateLine">memuat tanggal…</div>
+        </div>
+      </div>
+
+      <div class="stats" id="stats" style="display: none">
+        <div class="stat">
+          <div class="stat-num green" id="statAvail">–</div>
+          <div class="stat-label">Ruang tersedia</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num red" id="statBusy">–</div>
+          <div class="stat-label">Sedang dipakai</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num blue" id="statToday">–</div>
+          <div class="stat-label">Rapat hari ini</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" id="statRooms">–</div>
+          <div class="stat-label">Total ruang</div>
+        </div>
+      </div>
+
+      <div class="list" id="list">
+        <div class="state-msg" id="stateMsg">
+          Menghubungkan ke Google Sheets…
+        </div>
+      </div>
+
+      <footer>
+        <div><span class="sync-dot"></span>Sinkron otomatis tiap 60 detik</div>
+        <div id="lastSync">Belum sinkron</div>
+      </footer>
+    </div>
+
+    <script>
+      const SHEET_ID = "1MXLkqe4ypC1OMQSbya1XAplL5dea0Y6dwC0qgUvKOBg";
+      const SHEET_NAME = "Form Responses 1";
+      const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
+
+      function pad(n) {
+        return String(n).padStart(2, "0");
+      }
+
+      function updateClock() {
+        const now = new Date();
+        document.getElementById("clock").textContent =
+          `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+        const days = [
+          "Minggu",
+          "Senin",
+          "Selasa",
+          "Rabu",
+          "Kamis",
+          "Jumat",
+          "Sabtu",
+        ];
+        const months = [
+          "Januari",
+          "Februari",
+          "Maret",
+          "April",
+          "Mei",
+          "Juni",
+          "Juli",
+          "Agustus",
+          "September",
+          "Oktober",
+          "November",
+          "Desember",
+        ];
+        document.getElementById("dateLine").textContent =
+          `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+      }
+      updateClock();
+      setInterval(updateClock, 1000);
+
+      function parseGvizDate(v) {
+        if (!v || typeof v !== "string") return null;
+        const m = v.match(
+          /Date\((\d+),(\d+),(\d+)(?:,(\d+))?(?:,(\d+))?(?:,(\d+))?\)/,
+        );
+        if (!m) return null;
+        return new Date(
+          parseInt(m[1]),
+          parseInt(m[2]),
+          parseInt(m[3]),
+          m[4] ? parseInt(m[4]) : 0,
+          m[5] ? parseInt(m[5]) : 0,
+          m[6] ? parseInt(m[6]) : 0,
+        );
+      }
+      function extractCapacity(roomName) {
+        const m = roomName.match(/Kapasitas\s*(?:Mak[a-z]*)?\.?\s*(\d+)/i);
+        return m ? m[1] : null;
+      }
+      function fmtTime(d) {
+        return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      }
+      function escapeHtml(str) {
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      async function fetchBookings() {
+        const res = await fetch(GVIZ_URL);
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const text = await res.text();
+        const jsonStr = text.substring(
+          text.indexOf("{"),
+          text.lastIndexOf("}") + 1,
+        );
+        const data = JSON.parse(jsonStr);
+        const rows = data.table.rows || [];
+        const bookings = [];
+        for (const r of rows) {
+          const c = r.c || [];
+          const get = (i) => (c[i] ? c[i].v : null);
+          const start = parseGvizDate(get(3));
+          const end = parseGvizDate(get(4));
+          const room = get(7);
+          if (!start || !end || !room) continue;
+          bookings.push({
+            start,
+            end,
+            room,
+            nama: get(1) || "—",
+            agenda: get(5) || "",
+          });
+        }
+        return bookings;
+      }
+
+      const ROOMS = [
+        {
+          key: "direksi",
+          name: "Ruang Rapat Direksi",
+          capacity: 10,
+          note: "Perlu persetujuan direksi",
+        },
+        {
+          key: "warehouse",
+          name: "Ruang Rapat Warehouse",
+          capacity: 12,
+          note: "",
+        },
+        {
+          key: "batara",
+          name: "Ruang Rapat Batara Kresna",
+          capacity: null,
+          note: "Kantor Salak",
+        },
+        {
+          key: "cutmeutia",
+          name: "Ruang Rapat Cut Meutia",
+          capacity: null,
+          note: "Kantor Salak",
+        },
+      ];
+
+      function matchRoomKey(rawRoomName) {
+        const s = (rawRoomName || "").toLowerCase();
+        if (s.includes("direksi")) return "direksi";
+        if (
+          s.includes("warehouse") ||
+          s.includes(" wh ") ||
+          s.includes(" wh") ||
+          s.endsWith("wh")
+        )
+          return "warehouse";
+        if (s.includes("batara") || s.includes("kresna")) return "batara";
+        if (s.includes("cut meutia") || s.includes("meutia"))
+          return "cutmeutia";
+        return null;
+      }
+
+      function computeRoomStatuses(bookings) {
+        const now = new Date();
+        const todayKey = now.toDateString();
+
+        const results = ROOMS.map((roomDef) => {
+          const roomBookings = bookings.filter(
+            (b) => matchRoomKey(b.room) === roomDef.key,
+          );
+          const current = roomBookings.find(
+            (b) => b.start <= now && now <= b.end,
+          );
+          let next = null;
+          if (!current) {
+            const upcoming = roomBookings
+              .filter(
+                (b) => b.start > now && b.start.toDateString() === todayKey,
+              )
+              .sort((a, b) => a.start - b.start);
+            next = upcoming[0] || null;
+          }
+          return {
+            room: roomDef.name,
+            capacity: roomDef.capacity,
+            note: roomDef.note,
+            busy: !!current,
+            current,
+            next,
+          };
+        });
+
+        results.sort((a, b) => {
+          if (a.busy !== b.busy) return a.busy ? -1 : 1;
+          return a.room.localeCompare(b.room);
+        });
+        return results;
+      }
+
+      function renderList(statuses) {
+        const list = document.getElementById("list");
+        list.innerHTML = "";
+        statuses.forEach((s) => {
+          const row = document.createElement("div");
+          row.className = "room-row";
+
+          const details = [];
+          if (s.capacity) details.push(`Kapasitas ${s.capacity} orang`);
+          if (s.note) details.push(s.note);
+
+          const nameWrap = document.createElement("div");
+          nameWrap.innerHTML =
+            `<div class="room-name">${escapeHtml(s.room)}</div>` +
+            (details.length
+              ? `<div class="room-cap">${escapeHtml(details.join(" · "))}</div>`
+              : "");
+
+          const plate = document.createElement("div");
+          plate.className = "plate " + (s.busy ? "busy" : "free");
+          plate.innerHTML = `
+      <div class="plate-half busy-label">Dipakai</div>
+      <div class="plate-half free-label">Kosong</div>
+      <div class="plate-slider"></div>`;
+
+          const agenda = document.createElement("div");
+          agenda.className = "agenda";
+          if (s.busy && s.current) {
+            agenda.innerHTML = `<span class="who">${escapeHtml(s.current.nama)}</span> — ${escapeHtml(s.current.agenda || "Tanpa agenda")}`;
+          } else if (s.next) {
+            agenda.innerHTML = `<span class="muted">Rapat berikutnya:</span> ${escapeHtml(s.next.agenda || "Tanpa agenda")}`;
+          } else {
+            agenda.innerHTML = `<span class="muted">Tidak ada jadwal hari ini</span>`;
+          }
+
+          const until = document.createElement("div");
+          until.className = "until";
+          if (s.busy && s.current) {
+            until.innerHTML = `${fmtTime(s.current.start)}–${fmtTime(s.current.end)}`;
+          } else if (s.next) {
+            until.innerHTML = `${fmtTime(s.next.start)}–${fmtTime(s.next.end)}`;
+          } else {
+            until.textContent = "";
+          }
+
+          row.appendChild(nameWrap);
+          row.appendChild(plate);
+          row.appendChild(agenda);
+          row.appendChild(until);
+          list.appendChild(row);
+        });
+      }
+
+      function renderStats(statuses, bookings) {
+        const now = new Date();
+        const todayKey = now.toDateString();
+        const busyCount = statuses.filter((s) => s.busy).length;
+        const freeCount = statuses.length - busyCount;
+        const todayCount = bookings.filter(
+          (b) => b.start.toDateString() === todayKey,
+        ).length;
+        document.getElementById("statAvail").textContent = freeCount;
+        document.getElementById("statBusy").textContent = busyCount;
+        document.getElementById("statToday").textContent = todayCount;
+        document.getElementById("statRooms").textContent = statuses.length;
+        document.getElementById("stats").style.display = "flex";
+      }
+
+      function showError() {
+        document.getElementById("list").innerHTML =
+          `<div class="state-msg error">Gagal memuat data dari Google Sheets.<br>Pastikan sheet sudah di-share &quot;Anyone with the link can view&quot;.
+    <br><button class="retry-btn" onclick="loadData()">Coba Lagi</button></div>`;
+      }
+
+      async function loadData() {
+        try {
+          const bookings = await fetchBookings();
+          const statuses = computeRoomStatuses(bookings);
+          renderList(statuses);
+          renderStats(statuses, bookings);
+          const now = new Date();
+          document.getElementById("lastSync").textContent =
+            `Sinkron terakhir pukul ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+        } catch (err) {
+          console.error(err);
+          showError();
+        }
+      }
+      loadData();
+      setInterval(loadData, 60000);
+    </script>
+  </body>
+</html>
