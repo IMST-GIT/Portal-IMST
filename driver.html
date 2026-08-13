@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ketersediaan Driver &amp; Kendaraan — PT IMST</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --blue: #1044d1;
+        --blue-deep: #0b2f94;
+        --ink: #12182b;
+        --ink-soft: #5b6478;
+        --ink-faint: #9aa2b2;
+        --border: #e3e6ed;
+        --green: #1c7a44;
+        --green-tint: #e7f5ec;
+        --amber: #b5720f;
+        --amber-tint: #fbf1e0;
+        --bg: #ffffff;
+        --bg-soft: #f7f8fc;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .page {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 30px 24px 70px;
+      }
+      .page-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 22px;
+      }
+      h1 {
+        font-family: "Source Serif 4", Georgia, serif;
+        font-weight: 600;
+        font-size: 27px;
+        letter-spacing: -0.01em;
+      }
+      .subtitle {
+        font-size: 13.5px;
+        color: var(--ink-soft);
+        margin-top: 5px;
+      }
+
+      /* ===== Stat strip ===== */
+      .stats {
+        display: flex;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 30px;
+      }
+      .stat {
+        flex: 1;
+        padding: 14px 18px;
+        border-right: 1px solid var(--border);
+      }
+      .stat:last-child {
+        border-right: none;
+      }
+      .stat-num {
+        font-size: 22px;
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+      }
+      .stat-num.green {
+        color: var(--green);
+      }
+      .stat-num.amber {
+        color: var(--amber);
+      }
+      .stat-num.blue {
+        color: var(--blue);
+      }
+      .stat-label {
+        font-size: 11.5px;
+        color: var(--ink-soft);
+        margin-top: 3px;
+      }
+
+      /* ===== Section ===== */
+      .section-label {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1.6px;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        margin: 26px 0 10px;
+      }
+      .section-label:first-of-type {
+        margin-top: 0;
+      }
+
+      /* ===== Driver list ===== */
+      .list {
+        border-top: 1px solid var(--border);
+      }
+      .driver-row {
+        display: grid;
+        grid-template-columns: 1.3fr 130px 1.6fr;
+        align-items: center;
+        gap: 16px;
+        padding: 15px 4px;
+        border-bottom: 1px solid var(--border);
+      }
+      .driver-name {
+        font-size: 14.5px;
+        font-weight: 700;
+        color: var(--ink);
+      }
+      .driver-sub {
+        font-size: 12px;
+        color: var(--ink-faint);
+        margin-top: 2px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        padding: 5px 12px;
+        border-radius: 20px;
+        width: fit-content;
+      }
+      .badge-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+      }
+      .badge.ready {
+        color: var(--green);
+        background: var(--green-tint);
+      }
+      .badge.ready .badge-dot {
+        background: var(--green);
+      }
+      .badge.dinas {
+        color: var(--amber);
+        background: var(--amber-tint);
+      }
+      .badge.dinas .badge-dot {
+        background: var(--amber);
+      }
+      .badge.other {
+        color: var(--ink-soft);
+        background: var(--bg-soft);
+      }
+      .badge.other .badge-dot {
+        background: var(--ink-faint);
+      }
+
+      .task-info {
+        font-size: 13px;
+        color: var(--ink-soft);
+        line-height: 1.45;
+      }
+      .task-info .dest {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .task-info .muted {
+        color: var(--ink-faint);
+        font-style: italic;
+      }
+
+      /* ===== Vehicle pool cards ===== */
+      .pool-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 12px;
+      }
+      .pool-card {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 14px 16px;
+      }
+      .pool-card .car {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--ink);
+      }
+      .pool-card .plat {
+        font-size: 12px;
+        color: var(--ink-soft);
+        margin-top: 2px;
+        font-variant-numeric: tabular-nums;
+      }
+      .pool-card .loc {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 10px;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: var(--green);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
+      .pool-card .loc-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--green);
+      }
+
+      .state-msg {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--ink-soft);
+        font-size: 13.5px;
+      }
+      .state-msg.error {
+        color: #b5301f;
+      }
+      .retry-btn {
+        margin-top: 14px;
+        background: var(--blue);
+        border: none;
+        color: #fff;
+        padding: 8px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .retry-btn:hover {
+        background: var(--blue-deep);
+      }
+
+      footer {
+        margin-top: 26px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--ink-faint);
+      }
+      .sync-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--green);
+        display: inline-block;
+        margin-right: 6px;
+      }
+
+      @media (max-width: 640px) {
+        .driver-row {
+          grid-template-columns: 1fr;
+          row-gap: 8px;
+          padding: 16px 2px;
+        }
+        .stats {
+          flex-wrap: wrap;
+        }
+        .stat {
+          min-width: 45%;
+          border-bottom: 1px solid var(--border);
+        }
+      }
+      :focus-visible {
+        outline: 2px solid var(--blue);
+        outline-offset: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <h1>Ketersediaan Driver &amp; Kendaraan</h1>
+          <div class="subtitle">
+            Status operasional driver dan armada kendaraan
+          </div>
+        </div>
+      </div>
+
+      <div class="stats" id="stats" style="display: none">
+        <div class="stat">
+          <div class="stat-num green" id="statReady">–</div>
+          <div class="stat-label">Driver tersedia</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num amber" id="statDinas">–</div>
+          <div class="stat-label">Sedang dinas</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num blue" id="statPool">–</div>
+          <div class="stat-label">Kendaraan cadangan</div>
+        </div>
+        <div class="stat" id="statOtherBox" style="display: none">
+          <div class="stat-num" id="statOther">–</div>
+          <div class="stat-label">Status lainnya</div>
+        </div>
+      </div>
+
+      <div class="section-label">Status Driver</div>
+      <div class="list" id="driverList">
+        <div class="state-msg" id="stateMsg">
+          Menghubungkan ke Google Sheets…
+        </div>
+      </div>
+
+      <div class="section-label" id="poolLabel" style="display: none">
+        Kendaraan Cadangan Siap Pakai
+      </div>
+      <div class="pool-grid" id="poolList"></div>
+
+      <footer>
+        <div><span class="sync-dot"></span>Sinkron otomatis tiap 60 detik</div>
+        <div id="lastSync">Belum sinkron</div>
+      </footer>
+    </div>
+
+    <script>
+      const SHEET_ID = "1924GkccWAnD7OcTJuzRbtL093RFhXn8X54zHR4JjgMs";
+      const GID = "1181782494";
+      const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${GID}`;
+
+      function pad(n) {
+        return String(n).padStart(2, "0");
+      }
+      function escapeHtml(str) {
+        const div = document.createElement("div");
+        div.textContent = str == null ? "" : String(str);
+        return div.innerHTML;
+      }
+
+      function parseKeterangan(raw) {
+        const s = (raw || "").trim();
+        if (!s || /^ready$/i.test(s)) {
+          return { status: "ready", label: "Tersedia", location: "" };
+        }
+        const dinasMatch = s.match(/^Dinas\s+(\S+)\s+(.+)$/i);
+        if (dinasMatch) {
+          return {
+            status: "dinas",
+            label: "Dinas",
+            tujuan: dinasMatch[1],
+            tanggal: dinasMatch[2].trim(),
+          };
+        }
+        const readyLocMatch = s.match(/^Ready\s+(.+)$/i);
+        if (readyLocMatch) {
+          return {
+            status: "ready",
+            label: "Tersedia",
+            location: readyLocMatch[1].trim(),
+          };
+        }
+        // status lain dari dropdown (mis. Cuti, Sakit, Bengkel, Standby, dll) — tampilkan apa adanya
+        return { status: "other", label: s, location: "" };
+      }
+
+      async function fetchData() {
+        const res = await fetch(GVIZ_URL);
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const text = await res.text();
+        const jsonStr = text.substring(
+          text.indexOf("{"),
+          text.lastIndexOf("}") + 1,
+        );
+        const data = JSON.parse(jsonStr);
+        const rows = data.table.rows || [];
+
+        const drivers = [];
+        const pool = [];
+
+        for (const r of rows) {
+          const c = r.c || [];
+          const get = (i) => (c[i] ? c[i].v : "");
+          const driverName = (get(0) || "").toString().trim();
+          const mobil = (get(1) || "").toString().trim();
+          const plat = (get(2) || "").toString().trim();
+          const keterangan = (get(3) || "").toString().trim();
+
+          if (!driverName && !mobil && !plat && !keterangan) continue;
+
+          if (driverName) {
+            drivers.push({
+              nama: driverName,
+              mobil,
+              plat,
+              ...parseKeterangan(keterangan),
+            });
+          } else if (mobil || plat) {
+            pool.push({ mobil, plat, ...parseKeterangan(keterangan) });
+          }
+        }
+
+        return { drivers, pool };
+      }
+
+      function renderDrivers(drivers) {
+        const list = document.getElementById("driverList");
+        list.innerHTML = "";
+
+        // yang sedang dinas naik ke atas — lebih relevan buat dipantau
+        const sorted = [...drivers].sort((a, b) => {
+          if (a.status !== b.status) {
+            const rank = { dinas: 0, other: 1, ready: 2 };
+            return rank[a.status] - rank[b.status];
+          }
+          return a.nama.localeCompare(b.nama);
+        });
+
+        sorted.forEach((d) => {
+          const row = document.createElement("div");
+          row.className = "driver-row";
+
+          const nameCol = document.createElement("div");
+          nameCol.innerHTML =
+            `<div class="driver-name">${escapeHtml(d.nama)}</div>` +
+            (d.mobil
+              ? `<div class="driver-sub">${escapeHtml(d.mobil)}${d.plat ? " · " + escapeHtml(d.plat) : ""}</div>`
+              : "");
+
+          const badgeCol = document.createElement("div");
+          const badgeClass =
+            d.status === "ready"
+              ? "ready"
+              : d.status === "dinas"
+                ? "dinas"
+                : "other";
+          badgeCol.innerHTML = `<div class="badge ${badgeClass}"><span class="badge-dot"></span>${escapeHtml(d.label)}</div>`;
+
+          const infoCol = document.createElement("div");
+          infoCol.className = "task-info";
+          if (d.status === "dinas") {
+            infoCol.innerHTML = `<span class="dest">${escapeHtml(d.tujuan)}</span> — ${escapeHtml(d.tanggal)}`;
+          } else if (d.location) {
+            infoCol.innerHTML = `<span class="muted">${escapeHtml(d.location)}</span>`;
+          } else if (d.status === "ready") {
+            infoCol.innerHTML = `<span class="muted">Siap ditugaskan</span>`;
+          } else {
+            infoCol.innerHTML = `<span class="muted">—</span>`;
+          }
+
+          row.appendChild(nameCol);
+          row.appendChild(badgeCol);
+          row.appendChild(infoCol);
+          list.appendChild(row);
+        });
+      }
+
+      function renderPool(pool) {
+        const grid = document.getElementById("poolList");
+        const label = document.getElementById("poolLabel");
+        grid.innerHTML = "";
+
+        if (pool.length === 0) {
+          label.style.display = "none";
+          return;
+        }
+        label.style.display = "block";
+
+        pool.forEach((p) => {
+          const card = document.createElement("div");
+          card.className = "pool-card";
+          card.innerHTML = `
+      <div class="car">${escapeHtml(p.mobil || "Kendaraan")}</div>
+      <div class="plat">${escapeHtml(p.plat || "—")}</div>
+      <div class="loc"><span class="loc-dot"></span>${escapeHtml(p.location || "Tersedia")}</div>`;
+          grid.appendChild(card);
+        });
+      }
+
+      function renderStats(drivers, pool) {
+        const ready = drivers.filter((d) => d.status === "ready").length;
+        const dinas = drivers.filter((d) => d.status === "dinas").length;
+        const other = drivers.filter((d) => d.status === "other").length;
+        document.getElementById("statReady").textContent = ready;
+        document.getElementById("statDinas").textContent = dinas;
+        document.getElementById("statPool").textContent = pool.length;
+        const otherStat = document.getElementById("statOther");
+        const otherBox = document.getElementById("statOtherBox");
+        if (other > 0) {
+          otherStat.textContent = other;
+          otherBox.style.display = "";
+        } else {
+          otherBox.style.display = "none";
+        }
+        document.getElementById("stats").style.display = "flex";
+      }
+
+      function showError() {
+        document.getElementById("driverList").innerHTML =
+          `<div class="state-msg error">Gagal memuat data dari Google Sheets.<br>Pastikan sheet sudah di-share &quot;Anyone with the link can view&quot;.
+    <br><button class="retry-btn" onclick="loadData()">Coba Lagi</button></div>`;
+      }
+
+      async function loadData() {
+        try {
+          const { drivers, pool } = await fetchData();
+          renderStats(drivers, pool);
+          renderDrivers(drivers);
+          renderPool(pool);
+          const now = new Date();
+          document.getElementById("lastSync").textContent =
+            `Sinkron terakhir pukul ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+        } catch (err) {
+          console.error(err);
+          showError();
+        }
+      }
+
+      loadData();
+      setInterval(loadData, 60000);
+    </script>
+  </body>
+</html>
