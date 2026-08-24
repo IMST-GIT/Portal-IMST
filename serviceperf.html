@@ -383,7 +383,6 @@
             placeholder="Cari nomor tiket, divisi, atau kategori…"
           />
         </div>
-        <div class="filter-chip" data-filter="all">Semua</div>
         <div class="filter-chip active" data-filter="open">Belum Selesai</div>
         <div class="filter-chip" data-filter="done">Selesai</div>
       </div>
@@ -534,19 +533,19 @@
           noCol.innerHTML = `<span class="no-label">Tiket</span>${escapeHtml(t.nomorTiket)}`;
 
           const issueCol = document.createElement("div");
-          issueCol.innerHTML =
-            `<div class="issue-name">${escapeHtml(t.kategori)}${t.jenis ? " — " + escapeHtml(t.jenis) : ""}</div>` +
-            (t.deskripsi
-              ? `<div class="issue-desc">${escapeHtml(t.deskripsi)}</div>`
-              : "");
+          if (done) {
+            issueCol.innerHTML = "";
+          } else {
+            issueCol.innerHTML =
+              `<div class="issue-name">${escapeHtml(t.kategori)}${t.jenis ? " — " + escapeHtml(t.jenis) : ""}</div>` +
+              (t.deskripsi
+                ? `<div class="issue-desc">${escapeHtml(t.deskripsi)}</div>`
+                : "");
+          }
 
           const metaCol = document.createElement("div");
           metaCol.className = "meta";
-          metaCol.innerHTML =
-            `<span class="name">${escapeHtml(t.divisi)}</span>` +
-            (done && t.tindakLanjut
-              ? `<br><span class="tag">${escapeHtml(t.tindakLanjut.slice(0, 28))}</span>`
-              : "");
+          metaCol.innerHTML = `<span class="name">${escapeHtml(t.divisi)}</span>`;
 
           const badgeCol = document.createElement("div");
           badgeCol.innerHTML = done
