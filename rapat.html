@@ -54,7 +54,7 @@
         align-items: flex-end;
         gap: 16px;
         flex-wrap: wrap;
-        margin-bottom: 22px;
+        margin-bottom: 18px;
       }
       h1 {
         font-family: "Source Serif 4", Georgia, serif;
@@ -81,6 +81,32 @@
         font-size: 12px;
         color: var(--ink-faint);
         margin-top: 2px;
+      }
+
+      /* ===== View tabs ===== */
+      .view-tabs {
+        display: flex;
+        gap: 4px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 22px;
+      }
+      .view-tab {
+        padding: 10px 4px;
+        margin-right: 24px;
+        font-size: 13.5px;
+        font-weight: 700;
+        color: var(--ink-faint);
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+        transition: color 0.15s ease;
+      }
+      .view-tab:hover {
+        color: var(--ink);
+      }
+      .view-tab.active {
+        color: var(--blue);
+        border-color: var(--blue);
       }
 
       /* ===== Stat strip ===== */
@@ -218,6 +244,75 @@
         font-variant-numeric: tabular-nums;
       }
 
+      /* ===== Weekly view ===== */
+      .week-day {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        margin-bottom: 12px;
+        overflow: hidden;
+      }
+      .week-day-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        padding: 11px 16px;
+        background: var(--bg-soft);
+        border-bottom: 1px solid var(--border);
+      }
+      .week-day-label {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: var(--ink);
+      }
+      .week-day-date {
+        font-size: 11.5px;
+        color: var(--ink-faint);
+        font-variant-numeric: tabular-nums;
+      }
+      .week-day.is-today .week-day-head {
+        background: var(--blue-tint);
+      }
+      .week-day.is-today .week-day-label {
+        color: var(--blue-deep);
+      }
+      .week-day-items {
+        padding: 4px 16px;
+      }
+      .week-item {
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .week-item:last-child {
+        border-bottom: none;
+      }
+      .week-item-time {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--blue);
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+        min-width: 92px;
+      }
+      .week-item-room {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--ink);
+      }
+      .week-item-agenda {
+        font-size: 12.5px;
+        color: var(--ink-soft);
+        margin-top: 1px;
+      }
+      .week-empty {
+        padding: 14px 0;
+        font-size: 12.5px;
+        color: var(--ink-faint);
+        font-style: italic;
+      }
+
       /* ===== Footer ===== */
       footer {
         margin-top: 26px;
@@ -281,6 +376,13 @@
           min-width: 45%;
           border-bottom: 1px solid var(--border);
         }
+        .week-item {
+          flex-direction: column;
+          gap: 2px;
+        }
+        .week-item-time {
+          min-width: unset;
+        }
       }
       :focus-visible {
         outline: 2px solid var(--blue);
@@ -308,28 +410,41 @@
         </div>
       </div>
 
-      <div class="stats" id="stats" style="display: none">
-        <div class="stat">
-          <div class="stat-num green" id="statAvail">–</div>
-          <div class="stat-label">Ruang tersedia</div>
+      <div class="view-tabs">
+        <div class="view-tab active" data-view="today">Status Sekarang</div>
+        <div class="view-tab" data-view="week">Jadwal 7 Hari ke Depan</div>
+      </div>
+
+      <div id="todayView">
+        <div class="stats" id="stats" style="display: none">
+          <div class="stat">
+            <div class="stat-num green" id="statAvail">–</div>
+            <div class="stat-label">Ruang tersedia</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num red" id="statBusy">–</div>
+            <div class="stat-label">Sedang dipakai</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num blue" id="statToday">–</div>
+            <div class="stat-label">Rapat hari ini</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num" id="statRooms">–</div>
+            <div class="stat-label">Total ruang</div>
+          </div>
         </div>
-        <div class="stat">
-          <div class="stat-num red" id="statBusy">–</div>
-          <div class="stat-label">Sedang dipakai</div>
-        </div>
-        <div class="stat">
-          <div class="stat-num blue" id="statToday">–</div>
-          <div class="stat-label">Rapat hari ini</div>
-        </div>
-        <div class="stat">
-          <div class="stat-num" id="statRooms">–</div>
-          <div class="stat-label">Total ruang</div>
+
+        <div class="list" id="list">
+          <div class="state-msg" id="stateMsg">
+            Menghubungkan ke Google Sheets…
+          </div>
         </div>
       </div>
 
-      <div class="list" id="list">
-        <div class="state-msg" id="stateMsg">
-          Menghubungkan ke Google Sheets…
+      <div id="weekView" style="display: none">
+        <div id="weekList">
+          <div class="state-msg">Memuat jadwal minggu ini…</div>
         </div>
       </div>
 
@@ -586,6 +701,103 @@
         document.getElementById("stats").style.display = "flex";
       }
 
+      // ===== Jadwal 7 hari ke depan =====
+      const DAY_NAMES = [
+        "Minggu",
+        "Senin",
+        "Selasa",
+        "Rabu",
+        "Kamis",
+        "Jumat",
+        "Sabtu",
+      ];
+      const MONTHS_SHORT = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "Mei",
+        "Jun",
+        "Jul",
+        "Agu",
+        "Sep",
+        "Okt",
+        "Nov",
+        "Des",
+      ];
+
+      function renderWeekly(bookings) {
+        const container = document.getElementById("weekList");
+        container.innerHTML = "";
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // hanya ikutkan booking yang cocok dengan salah satu dari 4 ruang resmi
+        const validBookings = bookings.filter((b) => matchRoomKey(b.room));
+
+        for (let i = 0; i < 7; i++) {
+          const d = new Date(today);
+          d.setDate(d.getDate() + i);
+          const dKey = d.toDateString();
+
+          const dayBookings = validBookings
+            .filter((b) => b.start.toDateString() === dKey)
+            .sort((a, b) => a.start - b.start);
+
+          const dayBlock = document.createElement("div");
+          dayBlock.className = "week-day" + (i === 0 ? " is-today" : "");
+
+          const label =
+            i === 0 ? "Hari Ini" : i === 1 ? "Besok" : DAY_NAMES[d.getDay()];
+          const dateLabel = `${d.getDate()} ${MONTHS_SHORT[d.getMonth()]}`;
+
+          let itemsHtml;
+          if (dayBookings.length === 0) {
+            itemsHtml = `<div class="week-empty">Belum ada jadwal — semua ruang kosong</div>`;
+          } else {
+            itemsHtml = dayBookings
+              .map((b) => {
+                const roomDef = ROOMS.find(
+                  (r) => r.key === matchRoomKey(b.room),
+                );
+                const roomName = roomDef ? roomDef.name : b.room;
+                return `<div class="week-item">
+                  <div class="week-item-time">${fmtTime(b.start)}–${fmtTime(b.end)}</div>
+                  <div>
+                    <div class="week-item-room">${escapeHtml(roomName)}</div>
+                    <div class="week-item-agenda">${escapeHtml(b.nama)} — ${escapeHtml(b.agenda || "Tanpa agenda")}</div>
+                  </div>
+                </div>`;
+              })
+              .join("");
+          }
+
+          dayBlock.innerHTML = `
+            <div class="week-day-head">
+              <span class="week-day-label">${label}</span>
+              <span class="week-day-date">${dateLabel}</span>
+            </div>
+            <div class="week-day-items">${itemsHtml}</div>
+          `;
+          container.appendChild(dayBlock);
+        }
+      }
+
+      document.querySelectorAll(".view-tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          document
+            .querySelectorAll(".view-tab")
+            .forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+          const view = tab.dataset.view;
+          document.getElementById("todayView").style.display =
+            view === "today" ? "" : "none";
+          document.getElementById("weekView").style.display =
+            view === "week" ? "" : "none";
+        });
+      });
+
       function showError() {
         document.getElementById("list").innerHTML =
           `<div class="state-msg error">Gagal memuat data dari Google Sheets.<br>Pastikan sheet sudah di-share &quot;Anyone with the link can view&quot;.
@@ -598,6 +810,7 @@
           const statuses = computeRoomStatuses(bookings);
           renderList(statuses);
           renderStats(statuses, bookings);
+          renderWeekly(bookings);
           const now = new Date();
           document.getElementById("lastSync").textContent =
             `Sinkron terakhir pukul ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
