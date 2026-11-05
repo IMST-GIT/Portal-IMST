@@ -227,9 +227,34 @@
         color: rgba(255, 255, 255, 0.55);
       }
 
-      /* ============================================================
-         DASHBOARD SHELL
-         ============================================================ */
+      /* Wm */
+      .developer-watermark {
+        margin-top: 14px;
+        text-align: center;
+        font-family: "IBM Plex Sans", sans-serif;
+        font-size: 11px;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.15);
+      }
+
+      .developer-watermark a {
+        color: rgba(255, 255, 255, 0.3);
+        font-weight: 500;
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+
+      .developer-watermark a:hover {
+        color: rgba(255, 255, 255, 0.15);
+      }
+
+      .developer-watermark small {
+        display: block;
+        font-size: 9px;
+        color: rgba(255, 255, 255, 0.1);
+      }
+
+      /* DASHBOARD SHELL */
       .app {
         display: none;
       }
@@ -659,6 +684,17 @@
         </div>
 
         <div class="login-foot">GA DEPARTEMENT · DASHBOARD ADMIN</div>
+        <div class="developer-watermark">
+          Developed by
+          <!-- <a
+            href="https://github.com/Isan955"
+            target="_blank"
+            rel="noopener noreferrer"
+          > -->
+            Hasan
+          </a>
+          <small>Magang IT GA 2026</small>
+        </div>
       </div>
     </div>
 
